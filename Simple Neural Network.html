@@ -1,0 +1,61 @@
+<blockquote>
+  <p>Written with <a href="https://stackedit.io/">StackEdit</a>.</p>
+</blockquote>
+
+
+
+<h1 id="creating-a-simple-neural-network">Creating a Simple Neural Network</h1>
+
+<p>Assumptions - familiarity with Machine Learning concepts <br>
+familiarity with Python programming <br>
+This example will demonstrate how to read data from a csv file and train a simple neural network on the data.</p>
+
+<p>Files required -  <br>
+data.csv <br>
+singlenode.py </p>
+
+<p>Data <br>
+The data represents two clusters of linearly separable points. [Linearly Separable Data image]. The data is storeed in a CSV (Comma Separated Values) file. CSV is very common way to stores tabulated data. The data.csv file contains three columns. First two columns being the <script type="math/tex" id="MathJax-Element-123">x</script> and <script type="math/tex" id="MathJax-Element-124">y</script> coordinates and the third column is the class of the point. The class can be either 1 or 0.  This is going to be our ‘training data’. </p>
+
+<p>To import the data fro the CSV file we need to construct a pipleline having the following stages - </p>
+
+<ol>
+<li>The list of filenames</li>
+<li>Filename queue</li>
+<li>A Reader for the file format</li>
+<li>A decoder for a record read by the reader</li>
+<li>Example queue</li>
+</ol>
+
+<p>To read text files in comma-separated value (CSV) format, use a tf.TextLineReader with the tf.decode_csv operation.</p>
+
+<pre><code>import tensorflow as tf
+import numpy as np
+filename_queue = tf.train.string_input_producer(['linear-data.csv'])
+N = 1000
+reader = tf.TextLineReader()
+key, value = reader.read(filename_queue)
+record_defaults = [[0.], [1.], [1.]]
+col1, col2, col3 = tf.decode_csv(value, record_defaults=record_defaults)
+features = tf.pack([col1, col2])
+</code></pre>
+
+<p>We begin by creating a queue of all the names of file we plan to read. Then we create a node ‘reader’. ‘Reader’ takes the filename queue as input. Every file in the queue is read line by line. The output of this node is a list of all the lines with a unique key. With ‘tf.decode_csv’ we create another node decodes each line into a 3-tuple. The first two elements of the tuple represent the coordinates of the point. The third element Finally we use another node to pack the  coordinates into a numpy array.</p>
+
+<p>So far we haven’t really run any code. Only the Computational Graph was setup.</p>
+
+<pre><code>points = np.empty([N, 2], dtype = float)
+labels = np.empty([N, 1], dtype = int)
+with tf.Session() as sess:
+    # Start populating the filename queue.
+    coord = tf.train.Coordinator()
+    threads = tf.train.start_queue_runners(coord=coord)
+    tf.initialize_all_variables().run()
+    for i in range(N):
+        # Retrieve a single instance:
+        points[i], labels[i] = sess.run([features, col3])
+    coord.request_stop()
+    coord.join(threads)
+</code></pre>
+
+<p>A new session is created. Each time we call the sess.run() we read one line and store the values into the numpy arrays - points and labels. So we run a loop N number of times to readd all the lines. You must call tf.train.start_queue_runners to populate the queue before you call run or eval to execute the read. Otherwise read will block while it waits for filenames from the queue.</p>
