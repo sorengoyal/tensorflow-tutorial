@@ -1,0 +1,41 @@
+<blockquote>
+  <p>Written with <a href="https://stackedit.io/">StackEdit</a>.</p>
+</blockquote>
+
+
+
+<h1 id="introduction-to-neural-networks">Introduction to Neural Networks</h1>
+
+<blockquote>
+  <p>“…a computing system made up of a number of simple, highly interconnected processing elements, which process information by their dynamic state response to external inputs. <br>
+  In “Neural Network Primer: Part I” by Maureen Caudill, AI Expert, Feb. 1989</p>
+</blockquote>
+
+<p>Before jumping into TensorFlow, it would prove incredibly useful to have a baseline working knowledge of what a neural network is.</p>
+
+<p>Named because of its resemblance to the human mind, neural nets are comprised of interconnected neural units which pass data between each other and eventually out of the net.</p>
+
+<p>Each of these links can communicate and influence each other in several ways. These links can  be represented as members of different <strong>layers</strong> of the neural net. Each individual layer communicates with its neighboring layers through <strong>communication links</strong> between the individual nodes.</p>
+
+<p>In a broad sense, its easiest to imagine the layers as an input, output, and inner “hidden” layer.</p>
+
+<img src="nn.png">Neural Net Structure</img>
+
+<p>The outputs of interconnected neural units is defined by the <strong>activation</strong> function, which is the expression to be evaluated. The activation functions of different nodes are also associated with node-specific weights, which are adjusted while the network is learning.</p>
+
+<ul>
+<li>For example, imagine the wires of an electrical circuit as nodes carrying information. When an input is detected, their output is set to a 1, or ON state. Likewise, when no input is detected they transfer no information, or are set to a 0, OFF state.</li>
+</ul>
+
+<p>There is really no limit on how input into a node can be manipulated and outputted. Some examples of possible outputs include a simple identity, binary, or linear equation, or more complex such as a Gaussian or Sinusoidal output.</p>
+
+<p>Regardless of how you decide to manipulate the inputs of these nodes, you will always need to associate weights with them all. These weights are what provide the learning aspect of a neural network, and change depending on the inputs and the errors generated at its output.</p>
+
+<p>The most common supervised way to train neural networks is through the back-propagation of errors. Without getting into too much detail on how this works: <br>
+* An input is fed into a net, and output is received at the end <br>
+* The output is compared with the real expected value, and a training error is calculated <br>
+* This error is fed backwards through the net, and every node is assigned a part of the error depending on the part they played in creating it <br>
+* These errors are fed into a function which calculated the loss with respect to weight for each node <br>
+* Then an optimization function is used to calculate new weights for the effected nodes, and updates them</p>
+
+<p>If done correctly, this process will eventually result in an artificial neural net which can accurately predict whatever you feed it.</p>
