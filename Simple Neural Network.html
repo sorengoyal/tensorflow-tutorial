@@ -1,6 +1,17 @@
-<blockquote>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Neural Network</title>
+<link rel="stylesheet" href="https://stackedit.io/res-min/themes/base.css" />
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body><div class="container"><blockquote>
   <p>Written with <a href="https://stackedit.io/">StackEdit</a>.</p>
 </blockquote>
+
+
 
 
 
@@ -15,7 +26,7 @@ data.csv <br>
 singlenode.py </p>
 
 <p>Data <br>
-The data represents two clusters of linearly separable points. [Linearly Separable Data image]. The data is storeed in a CSV (Comma Separated Values) file. CSV is very common way to stores tabulated data. The data.csv file contains three columns. First two columns being the <script type="math/tex" id="MathJax-Element-123">x</script> and <script type="math/tex" id="MathJax-Element-124">y</script> coordinates and the third column is the class of the point. The class can be either 1 or 0.  This is going to be our ‘training data’. </p>
+The data represents two clusters of linearly separable points. <img src="linear-data-train.png">Linearly Separable Data</img>. The data is storeed in a CSV (Comma Separated Values) file. CSV is very common way to stores tabulated data. The data.csv file contains three columns. First two columns being the <script type="math/tex" id="MathJax-Element-944">x</script> and <script type="math/tex" id="MathJax-Element-945">y</script> coordinates and the third column is the class of the point. The class can be either 1 or 0.  This is going to be our ‘training data’. </p>
 
 <p>To import the data fro the CSV file we need to construct a pipleline having the following stages - </p>
 
@@ -40,7 +51,8 @@ col1, col2, col3 = tf.decode_csv(value, record_defaults=record_defaults)
 features = tf.pack([col1, col2])
 </code></pre>
 
-<p>We begin by creating a queue of all the names of file we plan to read. Then we create a node ‘reader’. ‘Reader’ takes the filename queue as input. Every file in the queue is read line by line. The output of this node is a list of all the lines with a unique key. With ‘tf.decode_csv’ we create another node decodes each line into a 3-tuple. The first two elements of the tuple represent the coordinates of the point. The third element Finally we use another node to pack the  coordinates into a numpy array.</p>
+<p>We begin by creating a queue of all the names of file we plan to read. Then we create a 
+ ‘reader’. ‘Reader’ takes the filename queue as input. Every file in the queue is read line by line. The output of this node is a list of all the lines with a unique key. With ‘tf.decode_csv’ we create another node decodes each line into a 3-tuple. The first two elements of the tuple represent the coordinates of the point. The third element Finally we use another node to pack the  coordinates into a numpy array.</p>
 
 <p>So far we haven’t really run any code. Only the Computational Graph was setup.</p>
 
@@ -59,3 +71,47 @@ with tf.Session() as sess:
 </code></pre>
 
 <p>A new session is created. Each time we call the sess.run() we read one line and store the values into the numpy arrays - points and labels. So we run a loop N number of times to readd all the lines. You must call tf.train.start_queue_runners to populate the queue before you call run or eval to execute the read. Otherwise read will block while it waits for filenames from the queue.</p>
+
+<p>Next we will create a Computational Graph for a Neural Network</p>
+
+<pre><code>x = tf.placeholder(tf.float32, [None, 2])
+W = tf.Variable(tf.random_normal([2, 1], stddev = 0.35))
+b = tf.Variable(tf.random_normal([1,1], stddev = 0.35))
+y = tf.sigmoid(tf.matmul(x, W) + b)
+y_ = tf.placeholder(tf.float32, [None, 1])
+error = tf.nn.l2_loss(y - y_) + 0.2*((tf.nn.l2_loss(W) + tf.square(b)))
+train_step = tf.train.GradientDescentOptimizer(0.1).minimize(error)
+</code></pre>
+
+<p>This creates a <img src="One Node neural Network.png">Singe Node Neural Network</img>.  <br>
+A neural network is essentially a complex equation of matrices. Tensorflow treats the network as such. So we do not define each node of the neural network, we stead we create nodes that compute an intermediate value of the matrix equation. I have wrtitten down the euqations as computed by the node. But this knowledge is not important to be able to run the code. <br>
+y = Sigmoid(xW + b) <br>
+    where x is 1x2 matrix <br>
+    W is a 2x2 matrix <br>
+    b is a scalar</p>
+
+<p>The loss value for the neural network is computed as  <br>
+<script type="math/tex; mode=display" id="MathJax-Element-946">\textrm{loss} = \|y' - y \|^2 + \alpha\left(\|W\|^2 + b^2\right)</script></p>
+
+<p>Finally we create a node called train_step which minimizes the loss using a gradient descent optimizer. <br>
+        prediction = tf.equal(tf.round(y), y_) <br>
+        accuracy = tf.reduce_mean(tf.cast(prediction, “float”)) <br>
+        with tf.Session() as sess: <br>
+        tf.initialize_all_variables().run() <br>
+        step = 10 <br>
+        epochs = 4 <br>
+        for e in range(0, epochs): <br>
+            for i in range(0, 4000, step): <br>
+                sess.run(train_step, feed_dict={x: examples[i:i+step], y_: labels[i:i+step]})</p>
+
+<pre><code>    prediction_value = sess.run(tf.round(y), feed_dict={x:examples[4001:5000], y_:labels[4001:5000]})
+    accuracy_value = sess.run(accuracy, feed_dict={x:examples[4001:5000], y_:labels[4001:5000]})
+    W_value = W.eval()
+    b_value = b.eval()  
+print('Model Trained')
+print('W = ' + repr(W_value))
+print('b = ' + repr(b_value))
+</code></pre>
+
+<p>We input the training data in batches of 10. The entire network is trained for 4 epochs. After the training ends we predict the classes for the remaining 1000 samples.  </p></div></body>
+</html>
