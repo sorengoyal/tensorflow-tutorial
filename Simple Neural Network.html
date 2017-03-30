@@ -21,14 +21,24 @@
 familiarity with Python programming <br>
 This example will demonstrate how to read data from a csv file and train a simple neural network on the data.</p>
 
-<p>Files required -  <br>
-data.csv <br>
-singlenode.py </p>
+<blockquote>
+  <p><strong>Files required for the tutorial</strong> -  </p>
+  
+  <ol>
+  <li>data.csv <a href="data.csv">(click to download)</a></li>
+  <li>singlenode.py<a href="singlenode.py">(click to download)</a> </li>
+  </ol>
+</blockquote>
 
-<p>Data <br>
-The data represents two clusters of linearly separable points. <img src="linear-data-train.png">Linearly Separable Data</img>. The data is storeed in a CSV (Comma Separated Values) file. CSV is very common way to stores tabulated data. The data.csv file contains three columns. First two columns being the <script type="math/tex" id="MathJax-Element-944">x</script> and <script type="math/tex" id="MathJax-Element-945">y</script> coordinates and the third column is the class of the point. The class can be either 1 or 0.  This is going to be our ‘training data’. </p>
 
-<p>To import the data fro the CSV file we need to construct a pipleline having the following stages - </p>
+
+<h4 id="data">Data</h4>
+
+<p>The data in <a href="data.csv">data.csv</a> represents two clusters of linearly separable points. The data is stored in a CSV (Comma Separated Values) file. CSV is very common way to stores tabulated data. The file contains three columns. First two columns being the <script type="math/tex" id="MathJax-Element-46">x</script> and <script type="math/tex" id="MathJax-Element-47">y</script> coordinates of the point and the third column is the class of the point. The class can be either 1 or 0.  The file contains 5000 points, out of these 4000 would be used for training and 1000 for testing.</p>
+
+<p><img src="linear-data-train.png" alt="Linearly separated Clusters" title="">.</p>
+
+<p>To import the data fro the CSV file we need to construct a pipeline having the following stages - </p>
 
 <ol>
 <li>The list of filenames</li>
@@ -38,80 +48,84 @@ The data represents two clusters of linearly separable points. <img src="linear-
 <li>Example queue</li>
 </ol>
 
-<p>To read text files in comma-separated value (CSV) format, use a tf.TextLineReader with the tf.decode_csv operation.</p>
+<p>This code sets up the pipeline -</p>
 
-<pre><code>import tensorflow as tf
-import numpy as np
-filename_queue = tf.train.string_input_producer(['linear-data.csv'])
-N = 1000
+<pre class="prettyprint"><code class=" hljs lua">filename_queue = tf.train.string_input_producer([<span class="hljs-string">'linear-data.csv'</span>])
+N = <span class="hljs-number">1000</span>
 reader = tf.TextLineReader()
 key, value = reader.read(filename_queue)
-record_defaults = [[0.], [1.], [1.]]
+record_defaults = <span class="hljs-string">[[0.], [1.], [1.]]</span>
 col1, col2, col3 = tf.decode_csv(value, record_defaults=record_defaults)
-features = tf.pack([col1, col2])
-</code></pre>
+features = tf.pack([col1, col2])</code></pre>
 
-<p>We begin by creating a queue of all the names of file we plan to read. Then we create a 
- ‘reader’. ‘Reader’ takes the filename queue as input. Every file in the queue is read line by line. The output of this node is a list of all the lines with a unique key. With ‘tf.decode_csv’ we create another node decodes each line into a 3-tuple. The first two elements of the tuple represent the coordinates of the point. The third element Finally we use another node to pack the  coordinates into a numpy array.</p>
+<p>We begin by creating a queue of all the names of files we plan to read. Then we create a node <code>Reader</code>. <code>Reader</code> takes the filename queue as input. Every file in the queue is read line by line. The output of this node is a list of all the lines with a unique key. With <code>tf.decode_csv</code> we create another node decodes each line into a 3-tuple. The first two elements of the tuple represent the coordinates of the point. The third element Finally we use another node to pack the  coordinates into a <em>numpy array</em>.</p>
 
 <p>So far we haven’t really run any code. Only the Computational Graph was setup.</p>
 
-<pre><code>points = np.empty([N, 2], dtype = float)
-labels = np.empty([N, 1], dtype = int)
-with tf.Session() as sess:
-    # Start populating the filename queue.
-    coord = tf.train.Coordinator()
-    threads = tf.train.start_queue_runners(coord=coord)
-    tf.initialize_all_variables().run()
-    for i in range(N):
-        # Retrieve a single instance:
-        points[i], labels[i] = sess.run([features, col3])
-    coord.request_stop()
-    coord.join(threads)
-</code></pre>
 
-<p>A new session is created. Each time we call the sess.run() we read one line and store the values into the numpy arrays - points and labels. So we run a loop N number of times to readd all the lines. You must call tf.train.start_queue_runners to populate the queue before you call run or eval to execute the read. Otherwise read will block while it waits for filenames from the queue.</p>
+
+<pre class="prettyprint"><code class=" hljs avrasm">points = np<span class="hljs-preprocessor">.empty</span>([N, <span class="hljs-number">2</span>], dtype = float)
+labels = np<span class="hljs-preprocessor">.empty</span>([N, <span class="hljs-number">1</span>], dtype = int)
+with tf<span class="hljs-preprocessor">.Session</span>() as sess:
+    coord = tf<span class="hljs-preprocessor">.train</span><span class="hljs-preprocessor">.Coordinator</span>()
+    threads = tf<span class="hljs-preprocessor">.train</span><span class="hljs-preprocessor">.start</span>_queue_runners(coord=coord)
+    tf<span class="hljs-preprocessor">.initialize</span>_all_variables()<span class="hljs-preprocessor">.run</span>()
+    for i <span class="hljs-keyword">in</span> range(N):
+        <span class="hljs-preprocessor"># Retrieve a single instance:</span>
+        points[i], labels[i] = sess<span class="hljs-preprocessor">.run</span>([features, col3])
+    coord<span class="hljs-preprocessor">.request</span>_stop()
+    coord<span class="hljs-preprocessor">.join</span>(threads)</code></pre>
+
+<p>A new session is created. Each time we call the <code>sess.run()</code> we read one line and store the values into the <em>numpy arrays</em> - points and labels. So we run a loop <code>N</code>number of times to read all the lines. You must call <code>tf.train.start_queue_runners</code> to populate the queue before you call run or eval to execute the read. Otherwise read will block while it waits for filenames from the queue.</p>
+
+
+
+<h4 id="neural-network">Neural Network</h4>
 
 <p>Next we will create a Computational Graph for a Neural Network</p>
 
-<pre><code>x = tf.placeholder(tf.float32, [None, 2])
-W = tf.Variable(tf.random_normal([2, 1], stddev = 0.35))
-b = tf.Variable(tf.random_normal([1,1], stddev = 0.35))
-y = tf.sigmoid(tf.matmul(x, W) + b)
-y_ = tf.placeholder(tf.float32, [None, 1])
-error = tf.nn.l2_loss(y - y_) + 0.2*((tf.nn.l2_loss(W) + tf.square(b)))
-train_step = tf.train.GradientDescentOptimizer(0.1).minimize(error)
-</code></pre>
+<pre class="prettyprint"><code class=" hljs avrasm"><span class="hljs-built_in">x</span> = tf<span class="hljs-preprocessor">.placeholder</span>(tf<span class="hljs-preprocessor">.float</span>32, [None, <span class="hljs-number">2</span>])
+W = tf<span class="hljs-preprocessor">.Variable</span>(tf<span class="hljs-preprocessor">.random</span>_normal([<span class="hljs-number">2</span>, <span class="hljs-number">1</span>], stddev = <span class="hljs-number">0.35</span>))
+b = tf<span class="hljs-preprocessor">.Variable</span>(tf<span class="hljs-preprocessor">.random</span>_normal([<span class="hljs-number">1</span>,<span class="hljs-number">1</span>], stddev = <span class="hljs-number">0.35</span>))
+<span class="hljs-built_in">y</span> = tf<span class="hljs-preprocessor">.sigmoid</span>(tf<span class="hljs-preprocessor">.matmul</span>(<span class="hljs-built_in">x</span>, W) + b)
+y_ = tf<span class="hljs-preprocessor">.placeholder</span>(tf<span class="hljs-preprocessor">.float</span>32, [None, <span class="hljs-number">1</span>])
+error = tf<span class="hljs-preprocessor">.nn</span><span class="hljs-preprocessor">.l</span>2_loss(<span class="hljs-built_in">y</span> - y_) + <span class="hljs-number">0.2</span>*((tf<span class="hljs-preprocessor">.nn</span><span class="hljs-preprocessor">.l</span>2_loss(W) + tf<span class="hljs-preprocessor">.square</span>(b)))
+train_step = tf<span class="hljs-preprocessor">.train</span><span class="hljs-preprocessor">.GradientDescentOptimizer</span>(<span class="hljs-number">0.1</span>)<span class="hljs-preprocessor">.minimize</span>(error)</code></pre>
 
-<p>This creates a <img src="One Node neural Network.png">Singe Node Neural Network</img>.  <br>
-A neural network is essentially a complex equation of matrices. Tensorflow treats the network as such. So we do not define each node of the neural network, we stead we create nodes that compute an intermediate value of the matrix equation. I have wrtitten down the euqations as computed by the node. But this knowledge is not important to be able to run the code. <br>
-y = Sigmoid(xW + b) <br>
-    where x is 1x2 matrix <br>
-    W is a 2x2 matrix <br>
-    b is a scalar</p>
+<p>A neural network is essentially a complex equation of matrices. Tensorflow treats the network as such. So we do not define each node of the neural network, instead we create nodes that compute an intermediate value of the matrix equation. I have written down the equations as computed by this network node. But this knowledge is not important to be able to run the code.</p>
+
+<p><script type="math/tex" id="MathJax-Element-442">y = \textrm{Sigmoid}(xW + b)</script> <br>
+<script type="math/tex" id="MathJax-Element-443">\textrm{where}</script> <br>
+<script type="math/tex" id="MathJax-Element-444">\textrm{ $x$ is $1\times 2$ matrix}</script> <br>
+<script type="math/tex" id="MathJax-Element-445">\textrm{ W is a $2\times 2$ matrix}</script> <br>
+<script type="math/tex" id="MathJax-Element-446">\textrm{ $b$ is a scalar}</script></p>
 
 <p>The loss value for the neural network is computed as  <br>
-<script type="math/tex; mode=display" id="MathJax-Element-946">\textrm{loss} = \|y' - y \|^2 + \alpha\left(\|W\|^2 + b^2\right)</script></p>
+<script type="math/tex; mode=display" id="MathJax-Element-447">\textrm{loss} = \|y' - y \|^2 + \alpha\left(\|W\|^2 + b^2\right)</script></p>
 
-<p>Finally we create a node called train_step which minimizes the loss using a gradient descent optimizer. <br>
-        prediction = tf.equal(tf.round(y), y_) <br>
-        accuracy = tf.reduce_mean(tf.cast(prediction, “float”)) <br>
-        with tf.Session() as sess: <br>
-        tf.initialize_all_variables().run() <br>
-        step = 10 <br>
-        epochs = 4 <br>
-        for e in range(0, epochs): <br>
-            for i in range(0, 4000, step): <br>
-                sess.run(train_step, feed_dict={x: examples[i:i+step], y_: labels[i:i+step]})</p>
+<p>Finally we create a node called train_step which minimizes the loss using a gradient descent optimizer.</p>
 
-<pre><code>    prediction_value = sess.run(tf.round(y), feed_dict={x:examples[4001:5000], y_:labels[4001:5000]})
-    accuracy_value = sess.run(accuracy, feed_dict={x:examples[4001:5000], y_:labels[4001:5000]})
-    W_value = W.eval()
-    b_value = b.eval()  
-print('Model Trained')
-print('W = ' + repr(W_value))
-print('b = ' + repr(b_value))
-</code></pre>
 
-<p>We input the training data in batches of 10. The entire network is trained for 4 epochs. After the training ends we predict the classes for the remaining 1000 samples.  </p></div></body>
+
+<pre class="prettyprint"><code class=" hljs avrasm">prediction = tf<span class="hljs-preprocessor">.equal</span>(tf<span class="hljs-preprocessor">.round</span>(<span class="hljs-built_in">y</span>), y_)
+accuracy = tf<span class="hljs-preprocessor">.reduce</span>_mean(tf<span class="hljs-preprocessor">.cast</span>(prediction, <span class="hljs-string">"float"</span>))
+with tf<span class="hljs-preprocessor">.Session</span>() as sess:
+  tf<span class="hljs-preprocessor">.initialize</span>_all_variables()<span class="hljs-preprocessor">.run</span>()
+  step = <span class="hljs-number">10</span>
+  epochs = <span class="hljs-number">4</span>
+  for e <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>, epochs):
+    for i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>, <span class="hljs-number">4000</span>, step):
+      sess<span class="hljs-preprocessor">.run</span>(train_step, feed_dict={<span class="hljs-built_in">x</span>: examples[i:i+step], y_: labels[i:i+step]})
+   prediction_value = sess<span class="hljs-preprocessor">.run</span>(tf<span class="hljs-preprocessor">.round</span>(<span class="hljs-built_in">y</span>), feed_dict={<span class="hljs-built_in">x</span>:examples[<span class="hljs-number">4001</span>:<span class="hljs-number">5000</span>], y_:labels[<span class="hljs-number">4001</span>:<span class="hljs-number">5000</span>]})
+   accuracy_value = sess<span class="hljs-preprocessor">.run</span>(accuracy, feed_dict={<span class="hljs-built_in">x</span>:examples[<span class="hljs-number">4001</span>:<span class="hljs-number">5000</span>], y_:labels[<span class="hljs-number">4001</span>:<span class="hljs-number">5000</span>]})
+   W_value = W<span class="hljs-preprocessor">.eval</span>()
+   b_value = b<span class="hljs-preprocessor">.eval</span>()  </code></pre>
+
+<p>We input the training data in batches of 10. The entire network is trained for 4 epochs. After the training ends we predict the classes for the remaining 1000 samples. </p>
+
+<blockquote>
+  <p><strong>The entire code can be downloaded</strong> </p>
+  
+  <p>singlenode.py<a href="singlenode.py"> (click to download)</a> </p>
+</blockquote></div></body>
 </html>
