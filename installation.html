@@ -1,0 +1,87 @@
+<h1 id="tensorflow-tutorial-installation">TensorFlow Tutorial - Installation</h1>
+
+<p>This chapter has two sections: installation and validation.</p>
+
+<p>In installation section, I will briefly go through three ways to install tensor flow on your PC:</p>
+
+<blockquote>
+  <p>using Docker on macOS X <br>
+  using pip on macOS X <br>
+  using pip on windows</p>
+</blockquote>
+
+<p>For more information,  please go TensorFlow official website <a href="https://www.tensorflow.org/install/install_mac#determine_how_to_install_tensorflow">here</a>.</p>
+
+<p>In valuation section, I will briefly go through how to validate your installation</p>
+
+<h1 id="section1-installation">Section1: installation</h1>
+
+
+
+<h2 id="1-using-docker-on-macos-x">1. using Docker on macOS X</h2>
+
+<h3 id="step1">step1:</h3>
+
+<p>If you already have Docker on your mac, you can jump to step2. Otherwise, go Docker website <a href="https://docs.docker.com/docker-for-mac/install/#what-to-know-before-you-install">here</a>, and install docker on your own machine. Donâ€™t worry, that will take you less than 5 minutes to set it up.</p>
+
+<h3 id="step2">step2:</h3>
+
+<p>launch a docker container that contains one of the TensorFlow binary images, by type following lines on your machine:</p>
+
+
+
+<pre class="prettyprint"><code class=" hljs applescript">$docker <span class="hljs-command">run</span> -<span class="hljs-keyword">it</span> gcr.io/tensorflow/tensorflow bash</code></pre>
+
+
+
+<h2 id="2-using-pip-on-macos-x">2. using pip on macOS X</h2>
+
+<h3 id="step1-1">step1:</h3>
+
+<p>check your prerequisite:</p>
+
+<blockquote>
+  <p>Python 2.7 <br>
+  Python 3.3+ <br>
+  pip <br>
+  pip3</p>
+</blockquote>
+
+
+
+<h3 id="step2-1">step2:</h3>
+
+<p>install tensor flow by type this in command line:</p>
+
+<pre class="prettyprint"><code class=" hljs cmake">pip <span class="hljs-keyword">install</span> tensorflow      <span class="hljs-comment"># Python 2.7; CPU support (no GPU support)</span></code></pre>
+
+
+
+<h2 id="3using-pip-on-windows">3.using pip on windows</h2>
+
+<h3 id="step1-2">step1:</h3>
+
+<p>make sure you have Python3.5.x from python.org</p>
+
+
+
+<h3 id="step2-2">step2:</h3>
+
+<p>start install by typing this on terminal:</p>
+
+<pre class="prettyprint"><code class=" hljs brainfuck"><span class="hljs-comment">C:\</span>&gt; <span class="hljs-comment">pip3</span> <span class="hljs-comment">install</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">upgrade</span> <span class="hljs-comment">tensorflow</span></code></pre>
+
+
+
+<h1 id="section2-validation">section2: Validation</h1>
+
+<p>Validate your installation and Run a short TensorFlow program. Open your terminal and type following line to run a simple program.</p>
+
+<pre class="prettyprint"><code class=" hljs bash"><span class="hljs-variable">$python</span></code></pre>
+
+
+
+<pre class="prettyprint"><code class=" hljs python"><span class="hljs-prompt">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> tensorflow <span class="hljs-keyword">as</span> tf
+<span class="hljs-prompt">&gt;&gt;&gt; </span>hello = tf.constant(<span class="hljs-string">'Hello, TensorFlow!'</span>)
+<span class="hljs-prompt">&gt;&gt;&gt; </span>sess = tf.Session()
+<span class="hljs-prompt">&gt;&gt;&gt; </span>print(sess.run(hello))</code></pre>
