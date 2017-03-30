@@ -1,9 +1,251 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<title>Tensorflow Tutorial</title>
-	</head>
-	<body>
-		Hello World !
-	</body>
-</html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Neural Network</title>
+<link rel="stylesheet" href="https://stackedit.io/res-min/themes/base.css" />
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body><div class="container"><blockquote>
+  <p>Written with <a href="https://stackedit.io/">StackEdit</a>.</p>
+</blockquote>
 
+<h1 id="introduction-to-neural-networks">Introduction to Neural Networks</h1>
+
+<blockquote>
+  <p>“…a computing system made up of a number of simple, highly interconnected processing elements, which process information by their dynamic state response to external inputs. <br>
+  In “Neural Network Primer: Part I” by Maureen Caudill, AI Expert, Feb. 1989</p>
+</blockquote>
+
+<p>Before jumping into TensorFlow, it would prove incredibly useful to have a baseline working knowledge of what a neural network is.</p>
+
+<p>Named because of its resemblance to the human mind, neural nets are comprised of interconnected neural units which pass data between each other and eventually out of the net.</p>
+
+<p>Each of these links can communicate and influence each other in several ways. These links can  be represented as members of different <strong>layers</strong> of the neural net. Each individual layer communicates with its neighboring layers through <strong>communication links</strong> between the individual nodes.</p>
+
+<p>In a broad sense, its easiest to imagine the layers as an input, output, and inner “hidden” layer.</p>
+
+<img src="nn.png">Neural Net Structure</img>
+
+<p>The outputs of interconnected neural units is defined by the <strong>activation</strong> function, which is the expression to be evaluated. The activation functions of different nodes are also associated with node-specific weights, which are adjusted while the network is learning.</p>
+
+<ul>
+<li>For example, imagine the wires of an electrical circuit as nodes carrying information. When an input is detected, their output is set to a 1, or ON state. Likewise, when no input is detected they transfer no information, or are set to a 0, OFF state.</li>
+</ul>
+
+<p>There is really no limit on how input into a node can be manipulated and outputted. Some examples of possible outputs include a simple identity, binary, or linear equation, or can be more complex such as a Gaussian or Sinusoidal output.</p>
+
+<p>Regardless of how you decide to manipulate the inputs of these nodes, you will always need to associate weights with them all. These weights are what provide the learning aspect of a neural network, and change depending on the inputs and the errors generated at its output.</p>
+
+<p>The most common supervised way to train neural networks is through the back-propagation of errors. Without getting into too much detail on how this works: <br>
+* An input is fed into a net, and output is received at the end <br>
+* The output is compared with the real expected value, and a training error is calculated <br>
+* This error is fed backwards through the net, and every node is assigned a part of the error depending on the part they played in creating it <br>
+* These errors are fed into a function which calculates the loss with respect to weight for each node <br>
+* Then an optimization function is used to calculate new weights for the effected nodes, and updates them</p>
+
+<p>If done correctly, this process will eventually result in an artificial neural net which can accurately predict whatever you feed it.</p>
+
+<h1 id="tensorflow-tutorial-installation">TensorFlow Tutorial - Installation</h1>
+
+<p>This chapter has two sections: installation and validation.</p>
+
+<p>In installation section, I will briefly go through three ways to install tensor flow on your PC:</p>
+
+<blockquote>
+  <p>using Docker on macOS X <br>
+  using pip on macOS X <br>
+  using pip on windows</p>
+</blockquote>
+
+<p>For more information,  please go TensorFlow official website <a href="https://www.tensorflow.org/install/install_mac#determine_how_to_install_tensorflow">here</a>.</p>
+
+<p>In valuation section, I will briefly go through how to validate your installation</p>
+
+<h1 id="section1-installation">Section1: installation</h1>
+
+
+
+<h2 id="1-using-docker-on-macos-x">1. using Docker on macOS X</h2>
+
+<h3 id="step1">step1:</h3>
+
+<p>If you already have Docker on your mac, you can jump to step2. Otherwise, go Docker website <a href="https://docs.docker.com/docker-for-mac/install/#what-to-know-before-you-install">here</a>, and install docker on your own machine. Donâ€™t worry, that will take you less than 5 minutes to set it up.</p>
+
+<h3 id="step2">step2:</h3>
+
+<p>launch a docker container that contains one of the TensorFlow binary images, by type following lines on your machine:</p>
+
+
+
+<pre class="prettyprint"><code class=" hljs applescript">$docker <span class="hljs-command">run</span> -<span class="hljs-keyword">it</span> gcr.io/tensorflow/tensorflow bash</code></pre>
+
+
+
+<h2 id="2-using-pip-on-macos-x">2. using pip on macOS X</h2>
+
+<h3 id="step1-1">step1:</h3>
+
+<p>check your prerequisite:</p>
+
+<blockquote>
+  <p>Python 2.7 <br>
+  Python 3.3+ <br>
+  pip <br>
+  pip3</p>
+</blockquote>
+
+
+
+<h3 id="step2-1">step2:</h3>
+
+<p>install tensor flow by type this in command line:</p>
+
+<pre class="prettyprint"><code class=" hljs cmake">pip <span class="hljs-keyword">install</span> tensorflow      <span class="hljs-comment"># Python 2.7; CPU support (no GPU support)</span></code></pre>
+
+
+
+<h2 id="3using-pip-on-windows">3.using pip on windows</h2>
+
+<h3 id="step1-2">step1:</h3>
+
+<p>make sure you have Python3.5.x from python.org</p>
+
+
+
+<h3 id="step2-2">step2:</h3>
+
+<p>start install by typing this on terminal:</p>
+
+<pre class="prettyprint"><code class=" hljs brainfuck"><span class="hljs-comment">C:\</span>&gt; <span class="hljs-comment">pip3</span> <span class="hljs-comment">install</span> <span class="hljs-literal">-</span><span class="hljs-literal">-</span><span class="hljs-comment">upgrade</span> <span class="hljs-comment">tensorflow</span></code></pre>
+
+
+
+<h1 id="section2-validation">section2: Validation</h1>
+
+<p>Validate your installation and Run a short TensorFlow program. Open your terminal and type following line to run a simple program.</p>
+
+<pre class="prettyprint"><code class=" hljs bash"><span class="hljs-variable">$python</span></code></pre>
+
+
+
+<pre class="prettyprint"><code class=" hljs python"><span class="hljs-prompt">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> tensorflow <span class="hljs-keyword">as</span> tf
+<span class="hljs-prompt">&gt;&gt;&gt; </span>hello = tf.constant(<span class="hljs-string">'Hello, TensorFlow!'</span>)
+<span class="hljs-prompt">&gt;&gt;&gt; </span>sess = tf.Session()
+<span class="hljs-prompt">&gt;&gt;&gt; </span>print(sess.run(hello))</code></pre>
+
+<h1 id="creating-a-simple-neural-network">Creating a Simple Neural Network</h1>
+
+<p>Assumptions - familiarity with Machine Learning concepts <br>
+familiarity with Python programming <br>
+This example will demonstrate how to read data from a csv file and train a simple neural network on the data.</p>
+
+<blockquote>
+  <p><strong>Files required for the tutorial</strong> -  </p>
+  
+  <ol>
+  <li>data.csv <a href="data.csv">(click to download)</a></li>
+  <li>singlenode.py<a href="singlenode.py">(click to download)</a> </li>
+  </ol>
+</blockquote>
+
+
+
+<h4 id="data">Data</h4>
+
+<p>The data in <a href="data.csv">data.csv</a> represents two clusters of linearly separable points. The data is stored in a CSV (Comma Separated Values) file. CSV is very common way to stores tabulated data. The file contains three columns. First two columns being the <script type="math/tex" id="MathJax-Element-46">x</script> and <script type="math/tex" id="MathJax-Element-47">y</script> coordinates of the point and the third column is the class of the point. The class can be either 1 or 0.  The file contains 5000 points, out of these 4000 would be used for training and 1000 for testing.</p>
+
+<p><img src="linear-data-train.png" alt="Linearly separated Clusters" title="">.</p>
+
+<p>To import the data fro the CSV file we need to construct a pipeline having the following stages - </p>
+
+<ol>
+<li>The list of filenames</li>
+<li>Filename queue</li>
+<li>A Reader for the file format</li>
+<li>A decoder for a record read by the reader</li>
+<li>Example queue</li>
+</ol>
+
+<p>This code sets up the pipeline -</p>
+
+<pre class="prettyprint"><code class=" hljs lua">filename_queue = tf.train.string_input_producer([<span class="hljs-string">'linear-data.csv'</span>])
+N = <span class="hljs-number">1000</span>
+reader = tf.TextLineReader()
+key, value = reader.read(filename_queue)
+record_defaults = <span class="hljs-string">[[0.], [1.], [1.]]</span>
+col1, col2, col3 = tf.decode_csv(value, record_defaults=record_defaults)
+features = tf.pack([col1, col2])</code></pre>
+
+<p>We begin by creating a queue of all the names of files we plan to read. Then we create a node <code>Reader</code>. <code>Reader</code> takes the filename queue as input. Every file in the queue is read line by line. The output of this node is a list of all the lines with a unique key. With <code>tf.decode_csv</code> we create another node decodes each line into a 3-tuple. The first two elements of the tuple represent the coordinates of the point. The third element Finally we use another node to pack the  coordinates into a <em>numpy array</em>.</p>
+
+<p>So far we haven’t really run any code. Only the Computational Graph was setup.</p>
+
+
+
+<pre class="prettyprint"><code class=" hljs avrasm">points = np<span class="hljs-preprocessor">.empty</span>([N, <span class="hljs-number">2</span>], dtype = float)
+labels = np<span class="hljs-preprocessor">.empty</span>([N, <span class="hljs-number">1</span>], dtype = int)
+with tf<span class="hljs-preprocessor">.Session</span>() as sess:
+    coord = tf<span class="hljs-preprocessor">.train</span><span class="hljs-preprocessor">.Coordinator</span>()
+    threads = tf<span class="hljs-preprocessor">.train</span><span class="hljs-preprocessor">.start</span>_queue_runners(coord=coord)
+    tf<span class="hljs-preprocessor">.initialize</span>_all_variables()<span class="hljs-preprocessor">.run</span>()
+    for i <span class="hljs-keyword">in</span> range(N):
+        <span class="hljs-preprocessor"># Retrieve a single instance:</span>
+        points[i], labels[i] = sess<span class="hljs-preprocessor">.run</span>([features, col3])
+    coord<span class="hljs-preprocessor">.request</span>_stop()
+    coord<span class="hljs-preprocessor">.join</span>(threads)</code></pre>
+
+<p>A new session is created. Each time we call the <code>sess.run()</code> we read one line and store the values into the <em>numpy arrays</em> - points and labels. So we run a loop <code>N</code>number of times to read all the lines. You must call <code>tf.train.start_queue_runners</code> to populate the queue before you call run or eval to execute the read. Otherwise read will block while it waits for filenames from the queue.</p>
+
+
+
+<h4 id="neural-network">Neural Network</h4>
+
+<p>Next we will create a Computational Graph for a Neural Network</p>
+
+<pre class="prettyprint"><code class=" hljs avrasm"><span class="hljs-built_in">x</span> = tf<span class="hljs-preprocessor">.placeholder</span>(tf<span class="hljs-preprocessor">.float</span>32, [None, <span class="hljs-number">2</span>])
+W = tf<span class="hljs-preprocessor">.Variable</span>(tf<span class="hljs-preprocessor">.random</span>_normal([<span class="hljs-number">2</span>, <span class="hljs-number">1</span>], stddev = <span class="hljs-number">0.35</span>))
+b = tf<span class="hljs-preprocessor">.Variable</span>(tf<span class="hljs-preprocessor">.random</span>_normal([<span class="hljs-number">1</span>,<span class="hljs-number">1</span>], stddev = <span class="hljs-number">0.35</span>))
+<span class="hljs-built_in">y</span> = tf<span class="hljs-preprocessor">.sigmoid</span>(tf<span class="hljs-preprocessor">.matmul</span>(<span class="hljs-built_in">x</span>, W) + b)
+y_ = tf<span class="hljs-preprocessor">.placeholder</span>(tf<span class="hljs-preprocessor">.float</span>32, [None, <span class="hljs-number">1</span>])
+error = tf<span class="hljs-preprocessor">.nn</span><span class="hljs-preprocessor">.l</span>2_loss(<span class="hljs-built_in">y</span> - y_) + <span class="hljs-number">0.2</span>*((tf<span class="hljs-preprocessor">.nn</span><span class="hljs-preprocessor">.l</span>2_loss(W) + tf<span class="hljs-preprocessor">.square</span>(b)))
+train_step = tf<span class="hljs-preprocessor">.train</span><span class="hljs-preprocessor">.GradientDescentOptimizer</span>(<span class="hljs-number">0.1</span>)<span class="hljs-preprocessor">.minimize</span>(error)</code></pre>
+
+<p>A neural network is essentially a complex equation of matrices. Tensorflow treats the network as such. So we do not define each node of the neural network, instead we create nodes that compute an intermediate value of the matrix equation. I have written down the equations as computed by this network node. But this knowledge is not important to be able to run the code.</p>
+
+<p><script type="math/tex" id="MathJax-Element-442">y = \textrm{Sigmoid}(xW + b)</script> <br>
+<script type="math/tex" id="MathJax-Element-443">\textrm{where}</script> <br>
+<script type="math/tex" id="MathJax-Element-444">\textrm{ $x$ is $1\times 2$ matrix}</script> <br>
+<script type="math/tex" id="MathJax-Element-445">\textrm{ W is a $2\times 2$ matrix}</script> <br>
+<script type="math/tex" id="MathJax-Element-446">\textrm{ $b$ is a scalar}</script></p>
+
+<p>The loss value for the neural network is computed as  <br>
+<script type="math/tex; mode=display" id="MathJax-Element-447">\textrm{loss} = \|y' - y \|^2 + \alpha\left(\|W\|^2 + b^2\right)</script></p>
+
+<p>Finally we create a node called train_step which minimizes the loss using a gradient descent optimizer.</p>
+
+
+
+<pre class="prettyprint"><code class=" hljs avrasm">prediction = tf<span class="hljs-preprocessor">.equal</span>(tf<span class="hljs-preprocessor">.round</span>(<span class="hljs-built_in">y</span>), y_)
+accuracy = tf<span class="hljs-preprocessor">.reduce</span>_mean(tf<span class="hljs-preprocessor">.cast</span>(prediction, <span class="hljs-string">"float"</span>))
+with tf<span class="hljs-preprocessor">.Session</span>() as sess:
+  tf<span class="hljs-preprocessor">.initialize</span>_all_variables()<span class="hljs-preprocessor">.run</span>()
+  step = <span class="hljs-number">10</span>
+  epochs = <span class="hljs-number">4</span>
+  for e <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>, epochs):
+    for i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>, <span class="hljs-number">4000</span>, step):
+      sess<span class="hljs-preprocessor">.run</span>(train_step, feed_dict={<span class="hljs-built_in">x</span>: examples[i:i+step], y_: labels[i:i+step]})
+   prediction_value = sess<span class="hljs-preprocessor">.run</span>(tf<span class="hljs-preprocessor">.round</span>(<span class="hljs-built_in">y</span>), feed_dict={<span class="hljs-built_in">x</span>:examples[<span class="hljs-number">4001</span>:<span class="hljs-number">5000</span>], y_:labels[<span class="hljs-number">4001</span>:<span class="hljs-number">5000</span>]})
+   accuracy_value = sess<span class="hljs-preprocessor">.run</span>(accuracy, feed_dict={<span class="hljs-built_in">x</span>:examples[<span class="hljs-number">4001</span>:<span class="hljs-number">5000</span>], y_:labels[<span class="hljs-number">4001</span>:<span class="hljs-number">5000</span>]})
+   W_value = W<span class="hljs-preprocessor">.eval</span>()
+   b_value = b<span class="hljs-preprocessor">.eval</span>()  </code></pre>
+
+<p>We input the training data in batches of 10. The entire network is trained for 4 epochs. After the training ends we predict the classes for the remaining 1000 samples. </p>
+
+<blockquote>
+  <p><strong>The entire code can be downloaded</strong> </p>
+  
+  <p>singlenode.py<a href="singlenode.py"> (click to download)</a> </p>
+</blockquote></div></body>
+</html>
